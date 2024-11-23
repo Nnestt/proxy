@@ -8,7 +8,7 @@ const FIREBASE_URL = "https://kaahoot-5e80b-default-rtdb.asia-southeast1.firebas
 const response = await axios.get(`${FIREBASE_URL}/quizzes.json`);
 
 // Option 2: If you need authentication (replace with your Firebase secret)
-const FIREBASE_AUTH = "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"; // Replace with your database secret
+const FIREBASE_AUTH = process.env.FIREBASE_AUTH; // Get the Firebase auth token from environment variables
 // const response = await axios.get(`${FIREBASE_URL}/quizzes.json?auth=${FIREBASE_AUTH}`);
 
 // Initialize Express
@@ -71,25 +71,6 @@ app.get("/:id", async (req, res) => {
     res.status(500).send("Error fetching data");
   }
 });
-
-// // Route to handle POST request to add new quizzes
-// app.post("/quizzes", async (req, res) => {
-//   const quizData = req.body; // Get the quiz data from the request body
-
-//   try {
-//     // Send POST request to Firebase Realtime Database to add the new quiz
-//     const response = await axios.post(
-//       `${FIREBASE_URL}/quizzes.json?auth=${FIREBASE_AUTH}`,
-//       quizData // Send the quiz data to Firebase
-//     );
-
-//     // Firebase returns a unique key for the new data
-//     res.status(201).json({ message: "Quiz added successfully", id: response.data.name }); // Response includes the new quiz's ID
-//   } catch (error) {
-//     console.error("Error posting data to Firebase:", error.message);
-//     res.status(500).send("Error posting data");
-//   }
-// });
 
 // Route to handle POST request to add player scores to a specific quiz
 app.post("/quizzes/:id/player_score", async (req, res) => {
