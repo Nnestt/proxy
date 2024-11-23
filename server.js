@@ -42,8 +42,7 @@ app.post("/quizzes/:id/player_score", async (req, res) => {
     // Send POST request to Firebase Realtime Database to add the player score
     const response = await axios.post(
       `${FIREBASE_URL}/quizzes/${id}/player_score.json?auth=${FIREBASE_AUTH}`,
-      score,
-      playerName// Send the player score data to Firebase
+      playerScore// Send the player score data to Firebase
     );
 
     // Firebase returns a unique key for the new data
