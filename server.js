@@ -72,6 +72,73 @@ app.get("/:id", async (req, res) => {
   }
 });
 
+// // Route to handle POST request to add new quizzes
+// app.post("/quizzes", async (req, res) => {
+//   const quizData = req.body; // Get the quiz data from the request body
+
+//   try {
+//     // Send POST request to Firebase Realtime Database to add the new quiz
+//     const response = await axios.post(
+//       `${FIREBASE_URL}/quizzes.json?auth=${FIREBASE_AUTH}`,
+//       quizData // Send the quiz data to Firebase
+//     );
+
+//     // Firebase returns a unique key for the new data
+//     res.status(201).json({ message: "Quiz added successfully", id: response.data.name }); // Response includes the new quiz's ID
+//   } catch (error) {
+//     console.error("Error posting data to Firebase:", error.message);
+//     res.status(500).send("Error posting data");
+//   }
+// });
+
+// Route to handle POST request to add player scores to a specific quiz
+app.post("/quizzes/:id/player_score", async (req, res) => {
+  const { id } = req.params;
+  const playerScore = req.body; // Get the player score data from the request body
+
+  try {
+    // Send POST request to Firebase Realtime Database to add the player score
+    const response = await axios.post(
+      `${FIREBASE_URL}/quizzes/${id}/player_score.json?auth=${FIREBASE_AUTH}`,
+      playerScore// Send the player score data to Firebase
+    );
+
+    // Firebase returns a unique key for the new data
+    res.status(201).json({ message: "Player score added successfully", id: response.data.name }); // Response includes the new player score's ID
+  } catch (error) {
+    console.error("Error posting player score to Firebase:", error.message);
+    res.status(500).send("Error posting player score");
+  }
+});
+
+// Redirect to HTTP in production
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.headers['x-forwarded-proto'] === 'https') {
+      return res.redirect('http://' + req.headers.host + req.url);
+    }
+    next();
+  });
+}
+
+app.get("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Fetch the quiz data from Firebase using the id
+    const response = await axios.get(`${FIREBASE_URL}/quizzes/${id}/questions.json?auth=${FIREBASE_AUTH}`);
+
+    if (response.data) {
+      res.json(response.data); // Forward the specific quiz data to the client
+    } else {
+      res.status(404).send("Quiz not found");
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error.message);
+    res.status(500).send("Error fetching data");
+  }
+});
+
 // Proxy route to fetch data from Firebase
 app.get("/quizzes", async (req, res) => {
   try {
