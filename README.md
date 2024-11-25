@@ -3,6 +3,8 @@
 
 A quiz game built for SIT students using TinyZero and Wifi Shield.
 
+Stack: Node.js, Express and Axios
+
 
 
 
